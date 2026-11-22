@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Saved models: pickles only load with the library versions that wrote them,
+# so each machine rebuilds them with `python scripts/run_experiments.py`
+results/models/
+
+# OS
+.DS_Store
+Thumbs.db

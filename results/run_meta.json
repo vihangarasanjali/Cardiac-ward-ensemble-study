@@ -1,0 +1,11 @@
+{
+  "seconds": 151.4,
+  "cv": "5-fold x 5 repeats",
+  "seed": 42,
+  "versions": {
+    "sklearn": "1.9.0",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10"
+  }
+}
