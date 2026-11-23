@@ -13,8 +13,6 @@ The Cardiac Patient Bed Head Ticket dataset, collected at the Teaching Hospital 
 - Dataset: https://zenodo.org/record/7603772 (CC BY 4.0)
 - Paper: Rajapaksha, L.T.W.; Vidanagamachchi, S.M.; Gunawardena, S.; Thambawita, V. *An Open-Access Dataset of Hospitalized Cardiac-Arrest Patients: Machine-Learning-Based Predictions Using Clinical Documentation.* BioMedInformatics 2024, 4, 34-49. https://doi.org/10.3390/biomedinformatics4010003
 
-Please cite both if you reuse this work. Place the raw file at `data/CardiacPatientData.csv`.
-
 ## What the dashboard shows
 
 | Page | Content |
@@ -121,6 +119,3 @@ The notebook finds the CSV in `data/`. Start Jupyter from the project root and o
 - Nested cross-validation for hyperparameter tuning
 - Random Forest + ARIMA hybrid on a longer time series
 
-## Author
-
-[Your name], [degree / university], [year]. Supervisor: [name].
