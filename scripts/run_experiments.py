@@ -19,7 +19,12 @@ from src.evaluate import run_cv, significance_table, summarize
 from src.features import clean, get_xy, load_raw
 from src.models import get_models
 
-SAVE_MODELS = ["Random Forest", "XGBoost", "Stacking (RF+XGB+LGBM -> LR)"]   # one ensemble per family: bagging, boosting, stacking
+SAVE_MODELS = {   # saved for the risk predictor: one ensemble per family
+    "Random Forest": "random_forest.joblib",
+    "XGBoost": "xgboost.joblib",
+    "Stacking (RF+XGB+LGBM -> LR)": "stacking.joblib",
+    "Hybrid (RF + ANN blend)": "hybrid.joblib",
+}
 
 
 def main(repeats: int):
@@ -68,11 +73,12 @@ def main(repeats: int):
         imp[name] = m.named_steps["clf"].feature_importances_
     pd.DataFrame(imp, index=features).rename_axis("feature").reset_index().to_csv(
         RESULTS_DIR / "feature_importance.csv", index=False)
-    for name in SAVE_MODELS:
+    for name, fname in SAVE_MODELS.items():
         m = models[name]
         if name not in imp:
             m.fit(X, y)
-        joblib.dump(m, MODELS_DIR / (name.split(" (")[0].lower().replace(" ", "_") + ".joblib"))
+        joblib.dump(m, MODELS_DIR / fname)
+    hyb = models["Hybrid (RF + ANN blend)"].named_steps["clf"]
     meta = {"features": features,
             "stats": {c: {"median": float(X[c].median()), "min": float(X[c].min()), "max": float(X[c].max()),
                           "p05": float(X[c].quantile(.05)), "p95": float(X[c].quantile(.95))} for c in features}}
@@ -83,6 +89,7 @@ def main(repeats: int):
     import xgboost, lightgbm, catboost
     (RESULTS_DIR / "run_meta.json").write_text(json.dumps({
         "seconds": round(time.time() - t0, 1), "cv": f"{N_SPLITS}-fold x {repeats} repeats", "seed": SEED,
+        "hybrid_rf_weight_full_data": hyb.weight_, "hybrid_inner_auc": hyb.inner_auc_,
         "versions": {"sklearn": sklearn.__version__, "xgboost": xgboost.__version__,
                      "lightgbm": lightgbm.__version__, "catboost": catboost.__version__}}, indent=2))
     print(f"[5/5] done in {time.time() - t0:.0f}s -> {RESULTS_DIR}", flush=True)

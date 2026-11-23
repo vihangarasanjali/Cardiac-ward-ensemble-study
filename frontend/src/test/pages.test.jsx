@@ -37,7 +37,7 @@ test('model comparison tabs and filters work', async () => {
   fireEvent.change(screen.getByLabelText('Metric'), { target: { value: 'Brier' } });
   fireEvent.click(screen.getByRole('tab', { name: 'Spread across folds' }));
   expect(screen.getByRole('img', { name: /Distribution of Brier/ })).toBeTruthy();
-  fireEvent.click(screen.getByRole('tab', { name: 'Against Random Forest' }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Significance tests' }));
   expect(screen.getByText('Decision Tree')).toBeTruthy();
   expect(screen.getByText(/comparisons reach p below 0.05/)).toBeTruthy();
 });
@@ -79,4 +79,13 @@ test('risk predictor shows the server message when prediction is rejected', asyn
   open('/predict');
   fireEvent.click(await screen.findByRole('button', { name: 'Predict' }));
   await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('Enter at least one valid reading'));
+});
+
+test('significance tab can switch the reference model to the hybrid', async () => {
+  open('/models');
+  fireEvent.click(await screen.findByRole('tab', { name: 'Significance tests' }));
+  expect(screen.getByText('Compared with Random Forest')).toBeTruthy();
+  fireEvent.change(screen.getByLabelText('Reference model'), { target: { value: 'Hybrid (RF + ANN blend)' } });
+  expect(screen.getByText('Compared with Hybrid (RF + ANN blend)')).toBeTruthy();
+  expect(screen.getByText('ANN (MLP)')).toBeTruthy();
 });

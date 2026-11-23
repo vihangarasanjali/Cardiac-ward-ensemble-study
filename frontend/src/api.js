@@ -17,7 +17,7 @@ export function useApi(path) {
   return state;
 }
 
-export const FAMILY_COLORS = { Baseline: 'var(--baseline)', Bagging: 'var(--bagging)', Boosting: 'var(--boosting)', Stacking: 'var(--stacking)' };
+export const FAMILY_COLORS = { Baseline: 'var(--baseline)', Bagging: 'var(--bagging)', Boosting: 'var(--boosting)', Stacking: 'var(--stacking)', Hybrid: 'var(--hybrid)' };
 
 export const METRICS = [
   { key: 'AUC', label: 'ROC-AUC' },

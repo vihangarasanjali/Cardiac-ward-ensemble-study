@@ -73,7 +73,7 @@ export default function Predictor() {
   return (
     <>
       <PageHead title="Risk predictor">
-        Score one patient with the three saved ensemble models (bagging, boosting and stacking) from their first hourly readings and admission details.
+        Score one patient with the four saved ensemble models (bagging, boosting, stacking and the RF + ANN hybrid) from their first hourly readings and admission details.
       </PageHead>
       <div className="content">
         <div className="examples">

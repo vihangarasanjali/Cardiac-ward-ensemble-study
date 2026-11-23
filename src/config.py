@@ -24,4 +24,5 @@ FAMILY = {  # used by the dashboard to colour/group models
     "AdaBoost": "Boosting", "Gradient Boosting": "Boosting", "XGBoost": "Boosting",
     "LightGBM": "Boosting", "CatBoost": "Boosting",
     "Stacking (RF+XGB+LGBM -> LR)": "Stacking",
+    "Hybrid (RF + ANN blend)": "Hybrid", "ANN (MLP)": "Baseline",
 }

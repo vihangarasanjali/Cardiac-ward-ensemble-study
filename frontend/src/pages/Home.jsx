@@ -36,7 +36,7 @@ export default function Home() {
             </li>
             <li>
               <Layers size={20} aria-hidden="true" />
-              <div><b>Three ensemble families.</b><p>Bagging (Random Forest, Extra Trees, bagged trees), boosting (XGBoost, LightGBM, CatBoost, AdaBoost, Gradient Boosting) and a stacked ensemble. Logistic regression and a single decision tree serve as baselines.</p></div>
+              <div><b>Three ensemble families and a hybrid.</b><p>Bagging (Random Forest, Extra Trees, bagged trees), boosting (XGBoost, LightGBM, CatBoost, AdaBoost, Gradient Boosting), a stacked ensemble, and a hybrid that blends a Random Forest with a neural network. Logistic regression, a single decision tree and the neural network alone serve as baselines.</p></div>
             </li>
             <li>
               <ShieldCheck size={20} aria-hidden="true" />
@@ -64,9 +64,10 @@ export default function Home() {
               </tbody>
             </table>
           </div>
+          <Note tone="caution">The leading ensembles are statistically tied. With only {report.died} deaths, AUC moves by about 0.14 between folds, so a gap of a few hundredths does not show that one model is better. The Model comparison page shows the tests.</Note>
         </section>
 
-        <p className="muted" style={{ marginTop: 40, fontSize: '0.88rem' }}>prototype built on one hospital unit. It is not a clinical decision tool.</p>
+        <p className="muted" style={{ marginTop: 40, fontSize: '0.88rem' }}>Research prototype built on one hospital unit. It is not a clinical decision tool.</p>
       </div>
     </>
   );

@@ -84,6 +84,7 @@ MODEL_FILES = {
     "Random Forest": "random_forest.joblib",
     "XGBoost": "xgboost.joblib",
     "Stacking (RF+XGB+LGBM -> LR)": "stacking.joblib",
+    "Hybrid (RF + ANN blend)": "hybrid.joblib",
 }
 
 

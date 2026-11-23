@@ -45,16 +45,23 @@ def corrected_ttest(a, b, n_train, n_test):
     return float(t), float(2 * stats.t.sf(abs(t), df=k - 1))
 
 
-def significance_table(folds: pd.DataFrame, n_patients: int, ref="Random Forest", n_splits=N_SPLITS) -> pd.DataFrame:
+REFERENCES = ("Random Forest", "Hybrid (RF + ANN blend)")
+
+
+def significance_table(folds: pd.DataFrame, n_patients: int, refs=REFERENCES, n_splits=N_SPLITS) -> pd.DataFrame:
+    """Corrected paired t-tests of each reference model against every other model."""
     n_test = n_patients // n_splits; n_train = n_patients - n_test
     rows = []
-    for other in folds.Model.unique():
-        if other == ref:
+    for ref in refs:
+        if ref not in set(folds.Model):
             continue
-        for m in ["AUC", "PR_AUC", "Recall", "F1"]:
-            a = folds[folds.Model == ref].sort_values("fold")[m].values
-            b = folds[folds.Model == other].sort_values("fold")[m].values
-            t, p = corrected_ttest(a, b, n_train, n_test)
-            rows.append({"reference": ref, "other": other, "metric": m,
-                         "mean_diff": float(a.mean() - b.mean()), "t": t, "p": p})
+        for other in folds.Model.unique():
+            if other == ref:
+                continue
+            for m in ["AUC", "PR_AUC", "Recall", "F1"]:
+                a = folds[folds.Model == ref].sort_values("fold")[m].values
+                b = folds[folds.Model == other].sort_values("fold")[m].values
+                t, p = corrected_ttest(a, b, n_train, n_test)
+                rows.append({"reference": ref, "other": other, "metric": m,
+                             "mean_diff": float(a.mean() - b.mean()), "t": t, "p": p})
     return pd.DataFrame(rows)

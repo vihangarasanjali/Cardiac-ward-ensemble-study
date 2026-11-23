@@ -4,7 +4,8 @@ import { useApi, fmt, FAMILY_COLORS, METRICS } from '../api';
 import { PageHead, Note, Tabs, Loading, LoadError, Legend } from '../components/ui';
 import BoxStrip from '../components/BoxStrip';
 
-const FAMILIES = ['Baseline', 'Bagging', 'Boosting', 'Stacking'];
+const FAMILIES = ['Baseline', 'Bagging', 'Boosting', 'Stacking', 'Hybrid'];
+const REFERENCES = ['Random Forest', 'Hybrid (RF + ANN blend)'];
 const SIG_METRICS = METRICS.filter((m) => ['AUC', 'PR_AUC', 'Recall', 'F1'].includes(m.key));
 
 function RankTip({ active, payload, metricLabel }) {
@@ -25,6 +26,7 @@ export default function ModelComparison() {
   const [metric, setMetric] = useState('AUC');
   const [fams, setFams] = useState(FAMILIES);
   const [sigMetric, setSigMetric] = useState('AUC');
+  const [ref, setRef] = useState('Random Forest');
 
   const lowerBetter = metric === 'Brier';
   const metricLabel = METRICS.find((m) => m.key === metric).label;
@@ -46,7 +48,7 @@ export default function ModelComparison() {
   if (ov.error || fo.error || sg.error) return <LoadError />;
 
   const toggle = (f) => setFams(fams.includes(f) ? fams.filter((x) => x !== f) : [...fams, f]);
-  const sigRows = sg.data.filter((r) => r.metric === sigMetric).sort((a, b) => a.p - b.p);
+  const sigRows = sg.data.filter((r) => r.metric === sigMetric && r.reference === ref).sort((a, b) => a.p - b.p);
   const nSig = sigRows.filter((r) => r.p < 0.05).length;
   const sigLabel = SIG_METRICS.find((m) => m.key === sigMetric).label;
   const domain = lowerBetter ? undefined : [0, 1];
@@ -54,10 +56,10 @@ export default function ModelComparison() {
   return (
     <>
       <PageHead title="Model comparison">
-        Eleven models in three ensemble families, scored on the same 25 cross-validation splits.
+        Bagging, boosting, stacking and a Random Forest + ANN hybrid, with simple baselines for reference, scored on the same 25 cross-validation splits.
       </PageHead>
       <div className="content">
-        <Tabs value={tab} onChange={setTab} tabs={[{ key: 'rank', label: 'Ranking' }, { key: 'spread', label: 'Spread across folds' }, { key: 'sig', label: 'Against Random Forest' }]} />
+        <Tabs value={tab} onChange={setTab} tabs={[{ key: 'rank', label: 'Ranking' }, { key: 'spread', label: 'Spread across folds' }, { key: 'sig', label: 'Significance tests' }]} />
 
         {tab !== 'sig' && (
           <div className="toolbar">
@@ -128,8 +130,13 @@ export default function ModelComparison() {
 
         {tab === 'sig' && (
           <section>
-            <p className="lede muted">Random Forest is the reference. Folds share training data, so the p-values use the Nadeau-Bengio corrected resampled t-test, which is stricter than a plain paired test.</p>
+            <p className="lede muted">Pick a reference model and see how every other model compares with it. Folds share training data, so the p-values use the Nadeau-Bengio corrected resampled t-test, which is stricter than a plain paired test.</p>
             <div className="toolbar">
+              <label className="field">Reference model
+                <select value={ref} onChange={(e) => setRef(e.target.value)}>
+                  {REFERENCES.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </label>
               <label className="field">Metric
                 <select value={sigMetric} onChange={(e) => setSigMetric(e.target.value)}>
                   {SIG_METRICS.map((m) => <option key={m.key} value={m.key}>{m.label}</option>)}
@@ -138,7 +145,7 @@ export default function ModelComparison() {
             </div>
             <div className="table-wrap">
               <table>
-                <thead><tr><th>Compared with Random Forest</th><th className="num">Difference in mean (RF minus other)</th><th className="num">p-value</th><th>Result</th></tr></thead>
+                <thead><tr><th>Compared with {ref}</th><th className="num">Difference in mean (reference minus other)</th><th className="num">p-value</th><th>Result</th></tr></thead>
                 <tbody>
                   {sigRows.map((r) => (
                     <tr key={r.other}>
